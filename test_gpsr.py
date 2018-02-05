@@ -6,7 +6,6 @@ Created on 2018-01-27
 
 import gpsr
 import numpy as np
-import scipy
 from scipy import linalg
 import matplotlib.pyplot as plt
 
@@ -34,18 +33,25 @@ x_min_norm = np.matmul(Apinv, y)
 tau = 0.1 * np.max(np.matmul(A.T, y))
 
 # x_gpsr = gpsr.gpsr(x_min_norm + 0.01 * (np.random.randn(N)), A, y, tau = tau, beta = 0.5, mu = 0.1, alpha_lims = (1e-30, 1e+30), tol = 0.01, iter_max = 20)
-x_gpsr = gpsr.gpsr_bb(x_min_norm + 0.01 * (np.random.randn(N)), A, y, tau = tau, alpha0 = 10, alpha_lims = (1e-30, 1e+30), tol = 0.01)
+x_gpsr = gpsr.gpsr_bb(x_min_norm + 0.01 * (np.random.randn(N)), A, y, tau = tau, alpha0 = 5, alpha_lims = (1e-30, 1e+30), tol = 0.01)
 
-x_debiased = gpsr.debaising(x_gpsr, A, y, tol = 0.01, fix_lev = 0.1, iter_max = 12)
+x_debiased = gpsr.debaising(x_gpsr, A, y, tol = 0.1, fix_lev = 0.1, iter_max = 12)
 
 print(tau)
 
 f, axes = plt.subplots(2, 2)
 axes[0, 0].plot(x)
+axes[0, 0].set_title('True signal')
+
 axes[0, 1].plot(x_debiased, '-r')
-axes[1, 0].plot(x - x_gpsr, '.b')
-axes[1, 0].plot(x - x_debiased, '.r')
-axes[1, 1].plot(x_gpsr, '-b')
+axes[0, 1].set_title('Reconstructed after debiasing')
+
+axes[1, 0].plot(x_gpsr, '-b')
+axes[1, 0].set_title('Reconstructed after GPSR')
+
+axes[1, 1].plot(x - x_gpsr, '.b')
+axes[1, 1].plot(x - x_debiased, '.r')
+axes[1, 1].set_title('Difference from true signal')
 
 print('MSE:', np.dot(x - x_debiased, x - x_debiased) / N, np.dot(x - x_gpsr, x - x_gpsr) / N )
 
