@@ -6,18 +6,6 @@ Created on 21 02 2018.
 
 import numpy as np
 
-def gabor_func(i, j, w, n):
-    '''
-    Gabor basis function
-    '''
-    return np.cos(2 * np.pi * (i) * (j) / (2 * n)) * np.exp(- (i) ** 2 * (j - n / 2) ** 2 / (w * n ** 2))
-
-def gen_gabor_matrix(m, n, w):
-    '''
-    Generate Gabor basis matrix
-    '''
-    return np.fromfunction(lambda i, j: gabor_func(i, j, w, m), (m, n))
-    
 
 def gpsr_bb(x0, A, W, y, tau, alpha0 = 1, alpha_lims = (1e-30, 1e+30), tol = 1e-6, iter_max = 20):
     '''
@@ -44,6 +32,7 @@ def gpsr_bb(x0, A, W, y, tau, alpha0 = 1, alpha_lims = (1e-30, 1e+30), tol = 1e-
     AtA = np.matmul(A.T, A)
 
     c = np.zeros(shape = (N2, ))
+#     f = np.zeros(shape = (N2, ))
     z_k = np.zeros(shape = (N2, ))
     Bz_k = np.zeros(shape = (N2, ))
     gradF_k = np.zeros(shape = (N2, ))
@@ -53,22 +42,23 @@ def gpsr_bb(x0, A, W, y, tau, alpha0 = 1, alpha_lims = (1e-30, 1e+30), tol = 1e-
 
     Z_k = np.zeros(shape = (N2, ))
 
-    c[:N] = tau * W - Aty
-    c[N:] = tau * W + Aty
+    c[:N] = - Aty
+    c[N:] = Aty
     
     # z_k
-
     z_k[:N] = x0    
     z_k[N:] = -x0
     z_k[z_k < 0] = 0
-
   
     # Bz
     Bz_k[:N] = np.matmul(AtA, z_k[:N] - z_k[N:])
     Bz_k[N:] = -Bz_k[:N]
 
     # gradient(F)
-    gradF_k[:] = c + Bz_k
+#     Wz_k = 
+    
+    gradF_k[:N] = c[:N] + tau * np.abs(np.matmul(W, z_k[:N])) + Bz_k[:N]
+    gradF_k[N:] = c[N:] + tau * np.abs(np.matmul(W, z_k[N:])) + Bz_k[N:]
 
     alpha_k = alpha0
     
@@ -115,7 +105,10 @@ def gpsr_bb(x0, A, W, y, tau, alpha0 = 1, alpha_lims = (1e-30, 1e+30), tol = 1e-
         Bz_k[:N] = np.matmul(AtA, z_k[:N] - z_k[N:])
         Bz_k[N:] = -Bz_k[:N]
 
-        gradF_k[:] = c + Bz_k
+        
+
+        gradF_k[:N] = c[N:] + tau * np.abs(np.matmul(W, z_k[:N])) + Bz_k[N:]
+        gradF_k[N:] = c[N:] - tau * np.abs(np.matmul(W, z_k[N:])) + Bz_k[N:]
 
         z_min_k[:] = np.minimum(z_k, gradF_k)
                 

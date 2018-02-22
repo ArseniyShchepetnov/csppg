@@ -7,7 +7,8 @@ import scipy.io
 import numpy as np
 
 def read_mat_ieee_training(ddir, n, t):
-    
+    '''
+    '''
     str_n = str(n) if n >= 10 else '0' + str(n)
     f1 = ddir + 'DATA_' + str_n + '_TYPE0' + str(t) + '.mat'
     f2 = ddir + 'DATA_' + str_n + '_TYPE0' + str(t) + '_BPMtrace.mat'

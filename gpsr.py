@@ -218,7 +218,7 @@ def gpsr_bb(x0, A, y, tau, alpha0 = 1, alpha_lims = (1e-30, 1e+30), tol = 1e-6, 
 
         z_min_k[:] = np.minimum(z_k, gradF_k)
                 
-        tol_k = np.dot(z_min_k, z_min_k) 
+        tol_k = np.dot(z_min_k, z_min_k) / np.dot(x0, x0)
         
         print('tolerance:', tol_k, tol)
         if tol_k <= tol:
