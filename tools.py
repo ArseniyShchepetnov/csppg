@@ -1,5 +1,5 @@
 '''
-Created on 21 02 2018 .
+Created on 21-02-2018 .
 
 @author: arseniy
 '''
@@ -8,6 +8,7 @@ import numpy as np
 
 def read_mat_ieee_training(ddir, n, t):
     '''
+    `IEEE Signal Processing Cup 2015 https://sites.google.com/site/researchbyzhang/ieeespcup2015`_   
     '''
     str_n = str(n) if n >= 10 else '0' + str(n)
     f1 = ddir + 'DATA_' + str_n + '_TYPE0' + str(t) + '.mat'

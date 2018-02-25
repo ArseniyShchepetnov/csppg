@@ -2,7 +2,12 @@
 Created on 2018-01-14
 
 @author: arseniy
+
+
+`Gradient Projection for Sparse Reconstruction: Application to Compressed Sensing and Other Inverse Problems
+http://ieeexplore.ieee.org/document/4407762/`_
 '''
+
 
 import numpy as np
 
