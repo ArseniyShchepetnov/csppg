@@ -1,5 +1,7 @@
 """
 Created on 21-02-2018 .
+
+Testing compressed sensing algorithms for PPG signals.
 """
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,7 +27,7 @@ def main():  # pylint: disable=too-many-locals
     sensing_matrix_0, _ = sensing.gen_random_sensing_matrix(
         MEASURED_LEN, SIG_LEN)
 
-    transform = transforms.gen_dct_matrix(BASIS_LEN, SIG_LEN)
+    transform = transforms.transform_dct(BASIS_LEN, SIG_LEN)
     transform = transform * np.sqrt(2 / SIG_LEN)
     transform_inv = np.linalg.inv(transform)
 

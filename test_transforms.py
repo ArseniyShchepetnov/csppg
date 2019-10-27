@@ -1,7 +1,7 @@
 '''
 Created on 25-02-2018 .
 
-@author: arseniy
+Test basis transformation.
 '''
 
 import matplotlib.pyplot as plt

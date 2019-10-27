@@ -1,7 +1,7 @@
 """
 Created on 28-02-2018.
 
-@author: arseniy
+Module for constructing sensing matrix.
 """
 from typing import Tuple
 
@@ -29,7 +29,7 @@ def gen_random_sensing_matrix(n_samples: int,
     Raises
     ------
     ValueError
-        [description]
+        When `sig_len` < `n_samples`.
     """
 
     sensing_matrix = np.zeros(shape=(n_samples, sig_len))

@@ -1,5 +1,7 @@
 """
 Created on 21-02-2018.
+
+Tools to load data.
 """
 import scipy.io
 import numpy as np

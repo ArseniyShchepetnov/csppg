@@ -1,9 +1,10 @@
 """
 Created on 2018-01-14
 
-`Gradient Projection for Sparse Reconstruction: Application to
+Implementation of functional from the article:
+'Gradient Projection for Sparse Reconstruction: Application to
 Compressed Sensing and Other Inverse Problems
-http://ieeexplore.ieee.org/document/4407762/`_
+http://ieeexplore.ieee.org/document/4407762'
 """
 import logging
 from typing import Optional, Tuple, Union

@@ -1,7 +1,7 @@
 """
 Created on 25-02-2018 .
 
-@author: arseniy
+Basis transformations.
 """
 import numpy as np
 
@@ -60,7 +60,7 @@ def gen_gabor_matrix(basis_len: int, sig_len: int, width: int) -> np.ndarray:
     return result
 
 
-def gen_dct_matrix(basis_len: int, sig_len: int) -> np.ndarray:
+def transform_dct(basis_len: int, sig_len: int) -> np.ndarray:
     """
     Cosine transform
 
