@@ -1,61 +1,73 @@
-'''
+"""
 Created on 2018-01-27
 
-@author: arseniy
+Test for GPSR.
+Signal of length N contains T random peaks with values -1 or 1.
+Signal is measured of M << N samples and reconstructed by GPSR.
+"""
 
-Test for GPSR. 
-Signal of length N contains T random peaks with values -1 or 1. Signal is measured of M << N samples and reconstructed by GPSR.  
- 
-'''
-
-import gpsr
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy import linalg
-import matplotlib.pyplot as plt
 
-# Signal size
-N = 4096
-# Sample size
-M = 1024
-# Number of peaks
-T = 160
+import gpsr
 
-# Init signal 
-x = np.zeros(shape = (N, ))
-q = np.random.randint(0, N, size = T)
-x[q] = np.sign(np.random.randn(T) - 0.5)
+SIG_LEN = 4096  # Signal size
+MEASURED_LEN = 1024  # Sample size
+NUM_NOT_ZEROS = 160  # Number of peaks
 
-A0 = np.random.randn(M, N)
-A = linalg.orth(A0.T).T
 
-y = np.matmul(A, x)
+def main():
+    """Main function"""
 
-Apinv = linalg.pinv(A)
-x_min_norm = np.matmul(Apinv, y) 
+    # Init signal
+    sig = np.zeros(shape=(SIG_LEN, ))
+    pos_not_zeros = np.random.randint(0, SIG_LEN, size=NUM_NOT_ZEROS)
+    sig[pos_not_zeros] = np.sign(np.random.randn(NUM_NOT_ZEROS) - 0.5)
 
-tau = 0.1 * np.max(np.matmul(A.T, y))
+    sensing_matrix = np.random.randn(MEASURED_LEN, SIG_LEN)
+    sensing_matrix = linalg.orth(sensing_matrix.T)  # pylint: disable=no-member
+    sensing_matrix = sensing_matrix.T
 
-# x_gpsr = gpsr.gpsr(x_min_norm + 0.01 * (np.random.randn(N)), A, y, tau = tau, beta = 0.5, mu = 0.1, alpha_lims = (1e-30, 1e+30), tol = 0.01, iter_max = 20)
-x_gpsr = gpsr.gpsr_bb(x_min_norm + 0.01 * (np.random.randn(N)), A, y, tau = tau, alpha0 = 5, alpha_lims = (1e-30, 1e+30), tol = 0.0001)
+    measured_sig = np.matmul(sensing_matrix, sig)
 
-x_debiased = gpsr.debaising(x_gpsr, A, y, tol = 0.01, fix_lev = 0.1, iter_max = 12)
+    sensing_matrix_pinv = linalg.pinv(sensing_matrix)
+    x_min_norm = np.matmul(sensing_matrix_pinv, measured_sig)
 
-print(tau)
+    tau = 0.1 * np.max(np.matmul(sensing_matrix.T, measured_sig))
 
-f, axes = plt.subplots(2, 2)
-axes[0, 0].plot(x)
-axes[0, 0].set_title('True signal')
+    initial_solution = x_min_norm + 0.01 * (np.random.randn(SIG_LEN))
 
-axes[0, 1].plot(x_debiased, '-r')
-axes[0, 1].set_title('Reconstructed after debiasing')
+    x_gpsr = gpsr.gpsr_bb(initial_solution,
+                          sensing_matrix,
+                          measured_sig,
+                          tau=tau, alpha0=5,
+                          alpha_lims=(1e-30, 1e+30), tolerance=0.0001)
 
-axes[1, 0].plot(x_gpsr, '-b')
-axes[1, 0].set_title('Reconstructed after GPSR')
+    x_debiased = gpsr.debaising(x_gpsr, sensing_matrix, measured_sig,
+                                tol=0.01, fix_lev=0.1, iter_max=12)
 
-axes[1, 1].plot(x - x_gpsr, '.b')
-axes[1, 1].plot(x - x_debiased, '.r')
-axes[1, 1].set_title('Difference from true signal')
+    print(tau)
 
-print('MSE:', np.dot(x - x_debiased, x - x_debiased) / N, np.dot(x - x_gpsr, x - x_gpsr) / N )
+    _, axes = plt.subplots(2, 2)
+    axes[0, 0].plot(sig)
+    axes[0, 0].set_title('True signal')
 
-plt.show()     
+    axes[0, 1].plot(x_debiased, '-r')
+    axes[0, 1].set_title('Reconstructed after debiasing')
+
+    axes[1, 0].plot(x_gpsr, '-b')
+    axes[1, 0].set_title('Reconstructed after GPSR')
+
+    axes[1, 1].plot(sig - x_gpsr, '.b')
+    axes[1, 1].plot(sig - x_debiased, '.r')
+    axes[1, 1].set_title('Difference from true signal')
+
+    print('MSE:', np.dot(sig - x_debiased, sig - x_debiased) /
+          SIG_LEN, np.dot(sig - x_gpsr, sig - x_gpsr) / SIG_LEN)
+
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()

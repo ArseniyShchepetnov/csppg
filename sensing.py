@@ -1,34 +1,53 @@
-'''
+"""
 Created on 28-02-2018.
 
 @author: arseniy
-'''
+"""
+from typing import Tuple
 
 import numpy as np
 
-def gen_random_sensing_matrix(m, n):
-    '''
-    Generate sensing matrix with random samples for signal of length n with m samples
-    
-    :param m: Number of random samples
-    :param n: Signal length
 
-    :returns: Sensing matrix, samples
-    '''
-    
-    M = np.zeros(shape = (m, n))
-    
-    if n < m:
-        raise Exception('Error in sensing::gen_random_sensing_matrix: n < m')
-    
-    samples = []    
-    while len(samples) < m:
-        x = np.random.randint(0, n)
-        if x not in samples:
-            samples.append(x)
+def gen_random_sensing_matrix(n_samples: int,
+                              sig_len: int) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Generate sensing matrix with random samples for signal of
+    length `sig_len` with `n_samples` samples.
+
+    Parameters
+    ----------
+    n_samples : int
+        Number of random samples
+    sig_len : int
+        Signal length
+
+    Returns
+    -------
+    np.ndarray, np.ndarray
+        Sensing matrix, samples
+
+    Raises
+    ------
+    ValueError
+        [description]
+    """
+
+    sensing_matrix = np.zeros(shape=(n_samples, sig_len))
+
+    if sig_len < n_samples:
+        raise ValueError(
+            'Error in sensing::gen_random_sensing_matrix: sig_len < n_samples')
+
+    samples = []
+    while len(samples) < n_samples:
+
+        pos = np.random.randint(0, sig_len)
+        if pos not in samples:
+            samples.append(pos)
+
     samples = np.sort(samples)
-    
-    for i in range(0, m):
-        M[i, samples[i]] = 1
-        
-    return M, samples
+
+    for i_sample in range(0, n_samples):
+        sensing_matrix[i_sample, samples[i_sample]] = 1
+
+    return sensing_matrix, samples

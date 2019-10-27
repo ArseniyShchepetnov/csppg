@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = false
+
+[dev-packages]
+pylint = "*"
+autopep8 = "*"
+rope = "*"
+
+[packages]
+pandas = "*"
+scipy = "*"
+matplotlib = "*"
+seaborn = "*"
+
+[requires]
+python_version = "3.6.8"
+
